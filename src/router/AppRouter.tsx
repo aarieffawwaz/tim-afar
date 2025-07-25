@@ -15,6 +15,8 @@ import VolunteersListPage from "@/pages/admin/VolunteersListPage";
 import VolunteerDetailPage from "@/pages/admin/VolunteerDetailPage";
 import ActivitiesListPage from "@/pages/admin/ActivitiesListPage";
 import ActivityFormPage from "@/pages/admin/ActivityFormPage"; // <-- Impor halaman form baru
+import MatchmakingListPage from "@/pages/admin/MatchmakingListPage";
+import MatchmakingDetailPage from "@/pages/admin/MatchmakingDetailPage";
 
 const PlaceholderPage = ({ title }: { title: string }) => (
   <h1 className="text-3xl font-bold">{title}</h1>
@@ -43,10 +45,8 @@ const AppRouter = () => {
         {/* Rute baru untuk Create dan Edit */}
         <Route path="activities/new" element={<ActivityFormPage />} />
         <Route path="activities/edit/:id" element={<ActivityFormPage />} />
-        <Route
-          path="matchmaking"
-          element={<PlaceholderPage title="Matchmaking Dashboard" />}
-        />
+        <Route path="matchmaking" element={<MatchmakingListPage />} />
+        <Route path="matchmaking/:id" element={<MatchmakingDetailPage />} />
       </Route>
 
       {/* Rute Volunteer */}
