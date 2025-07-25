@@ -20,9 +20,59 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Loader2 } from "lucide-react"; // <-- 1. Impor ikon Loader2
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// --- Komponen Skeleton untuk Loading State ---
+const MatchmakingDetailSkeleton = () => (
+  <div className="space-y-6 animate-pulse">
+    <Skeleton className="h-9 w-40" />
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-7 w-3/4" />
+        <Skeleton className="h-4 w-full mt-2" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-4 w-1/2" />
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <Skeleton className="h-7 w-1/3" />
+        <Skeleton className="h-10 w-48" />
+      </CardHeader>
+      <CardContent>
+        <div className="rounded-lg border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[50px]"><Skeleton className="h-5 w-5" /></TableHead>
+                <TableHead><Skeleton className="h-5 w-32" /></TableHead>
+                <TableHead className="text-right"><Skeleton className="h-5 w-24" /></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[...Array(3)].map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-5 w-5" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-3 w-48 mt-2" />
+                  </TableCell>
+                  <TableCell className="text-right"><Skeleton className="h-6 w-16" /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+);
+
 
 // Tipe data sesuai API response
 interface ActivityDetail {
@@ -49,7 +99,7 @@ export default function MatchmakingDetailPage() {
     new Set()
   );
   const [isLoading, setIsLoading] = useState(true);
-  const [isAssigning, setIsAssigning] = useState(false); // <-- 2. State baru untuk proses assignment
+  const [isAssigning, setIsAssigning] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,6 +126,7 @@ export default function MatchmakingDetailPage() {
         setRecommended(data.recommended_volunteers);
       } catch (error) {
         console.error("Failed to fetch matchmaking data:", error);
+        toast.error("Failed to load matchmaking data.");
       } finally {
         setIsLoading(false);
       }
@@ -110,7 +161,7 @@ export default function MatchmakingDetailPage() {
       return;
     }
 
-    setIsAssigning(true); // <-- 3. Set loading true di awal
+    setIsAssigning(true);
     const volunteerIds = Array.from(selectedVolunteers);
 
     try {
@@ -139,11 +190,11 @@ export default function MatchmakingDetailPage() {
       console.error("Error assigning volunteers:", error);
       toast.error((error as Error).message);
     } finally {
-      setIsAssigning(false); // <-- 4. Set loading false di akhir
+      setIsAssigning(false);
     }
   };
 
-  if (isLoading) return <div className="p-8">Loading matchmaking data...</div>;
+  if (isLoading) return <MatchmakingDetailSkeleton />;
   if (!activity) return <div className="p-8">Activity not found.</div>;
 
   return (
@@ -171,7 +222,6 @@ export default function MatchmakingDetailPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Recommended Volunteers</CardTitle>
-          {/* --- 5. Perbarui Tombol Assign --- */}
           <Button
             onClick={handleAssign}
             disabled={selectedVolunteers.size === 0 || isAssigning}
